@@ -1,8 +1,8 @@
 function m_error() {
-	document.getElementsByClassName('edit_history')[0].setAttribute('href', `https://github.com/RainPPR/whk/commits/main`);
+	document.getElementsByClassName('edit_history')[0].setAttribute('href', 'https://github.com/RainPPR/');
 	document.getElementsByClassName('facts_modified')[0].innerHTML = ('最近没更新过这个页面');
 	document.getElementsByClassName('page_contributors')[0].innerHTML = ('本页面是自动生成的');
-	document.getElementsByClassName('page_edit_url')[0].setAttribute('href', `#`);
+	document.getElementsByClassName('page_edit_url')[0].setAttribute('href', '#');
 }
 
 function foo(response) {
@@ -32,7 +32,7 @@ function foo(response) {
 			sorted.splice(index, 1);
 		}
 		sorted = sorted.map(function (x) {
-			return `<a href=https://github.com/${x}>${x}</a>`
+			return '<a href=https://github.com/${x}>${x}</a>'
 		})
 		document.getElementsByClassName('facts_modified')[0].innerHTML = (ti);
 		document.getElementsByClassName('page_contributors')[0].innerHTML = (sorted.join(', '));
@@ -54,22 +54,25 @@ function m_get_info() {
 		var textLength = 0;
 		if (pos < 0) textLength = (document.getElementsByClassName('md-content__inner')[0].textContent.slice(0, pos).replace(/\s/g, '').length - document.getElementsByTagName('h1')[0].textContent.replace(/\s/g, '').length - document.getElementsByClassName('page-copyright')[0].textContent.replace(/\s/g, '').length - 4);
 		else textLength = (document.getElementsByClassName('md-content__inner')[0].textContent.replace(/\s/g, '').length - document.getElementsByTagName('h1')[0].textContent.replace(/\s/g, '').length - document.getElementsByClassName('page-copyright')[0].textContent.replace(/\s/g, '').length - 4);
-		if (textLength <= 0) cur.innerHTML = `<p>本页面还在建设中，欢迎参与完善！</p>`;
+		if (textLength <= 0) cur.innerHTML = '<p>本页面还在建设中，欢迎参与完善！</p>';
 	}
 
-	document.getElementsByTagName("html")[0].lang = "zh-Hans"; // change language to `zh-Hans` for Han.js.
+	document.getElementsByTagName("html")[0].lang = "zh-Hans"; // change language to 'zh-Hans' for Han.js.
 
 	// var url = document.getElementsByClassName('page_edit_url')[0].href.split('?ref=')[1];
 	var url = document.getElementsByClassName('page_edit_url')[0].href.split('docs')[1];
+	var sub = document.getElementsByClassName('page_edit_url')[0].href.split('RainPPR/')[1].split('/edit')[0];
 	// var url = document.URL.replace(/http\S+\.org\//gi, '').replace(/#\S+$/gi, '').slice(0, -1);
 	var script = document.createElement('script');
 
 	console.log(url);
+	console.log(sub);
 
 	if (typeof (url) != 'undefined') {
 		console.log("WOW1");
-		document.getElementsByClassName('edit_history')[0].setAttribute('href', `https://github.com/RainPPR/whk/commits/main/docs${url}`);
-		script.src = `https://api.github.com/repos/RainPPR/whk/commits?path=docs${url}&callback=foo`;
+		document.getElementsByClassName('edit_history')[0].setAttribute('href', 'https://github.com/RainPPR/' + sub + '/commits/main/docs${url}');
+		script.src = 'https://api.github.com/repos/RainPPR/' + sub + '/commits?path=docs${url}&callback=foo';
+		console.log(script.src);
 		document.getElementsByTagName('head')[0].appendChild(script);
 	} else {
 		console.log("ERROR1");
