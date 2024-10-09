@@ -103,3 +103,7 @@ document$.subscribe(({ body }) => {
 	m_get_info();
 	console.log("subscribe");
 });
+
+document$.subscribe(() => {
+  hljs.highlightAll()
+})
