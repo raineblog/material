@@ -21,3 +21,11 @@ blockquote.page-copyright {
     .no-print { display: none !important; }
     code, pre { white-space: pre-wrap; overflow: hidden; }
 }
+
+a {
+    text-decoration: underline;
+}
+
+a:hover {
+    filter: invert(0.2); /* 反转颜色 */
+}
