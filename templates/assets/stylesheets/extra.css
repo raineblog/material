@@ -22,9 +22,9 @@ blockquote.page-copyright {
     code, pre { white-space: pre-wrap; overflow: hidden; }
 }
 
-a {
+/* a {
     text-decoration: underline;
-}
+} */
 
 a:hover {
     filter: invert(0.2); /* 反转颜色 */
