@@ -1,5 +1,5 @@
 function m_error() {
-	document.getElementsByClassName('edit_history')[0].setAttribute('href', 'https://github.com/RainPPR/');
+	document.getElementsByClassName('edit_history')[0].setAttribute('href', '{{ config.repo_url }}');
 	document.getElementsByClassName('facts_modified')[0].innerHTML = ('最近没更新过这个页面');
 	document.getElementsByClassName('page_contributors')[0].innerHTML = ('本页面是自动生成的');
 	document.getElementsByClassName('page_edit_url')[0].setAttribute('href', '#');
@@ -61,7 +61,7 @@ function m_get_info() {
 
 	// var url = document.getElementsByClassName('page_edit_url')[0].href.split('?ref=')[1];
 	var url = document.getElementsByClassName('page_edit_url')[0].href.split('docs')[1];
-	var sub = document.getElementsByClassName('page_edit_url')[0].href.split('RainPPR/')[1].split('/edit')[0];
+	var sub = document.getElementsByClassName('page_edit_url')[0].href.split('{{ config.site_author }}/')[1].split('/edit')[0];
 	// var url = document.URL.replace(/http\S+\.org\//gi, '').replace(/#\S+$/gi, '').slice(0, -1);
 	var script = document.createElement('script');
 
@@ -70,8 +70,8 @@ function m_get_info() {
 
 	if (typeof (url) != 'undefined') {
 		console.log("WOW1");
-		document.getElementsByClassName('edit_history')[0].setAttribute('href', 'https://github.com/RainPPR/' + sub + `/commits/main/docs${url}`);
-		script.src = 'https://api.github.com/repos/RainPPR/' + sub + `/commits?path=docs${url}&callback=foo`;
+		document.getElementsByClassName('edit_history')[0].setAttribute('href', 'https://github.com/{{ config.site_author }}/' + sub + `/commits/main/docs${url}`);
+		script.src = 'https://api.github.com/repos/{{ config.site_author }}/' + sub + `/commits?path=docs${url}&callback=foo`;
 		console.log(script.src);
 		document.getElementsByTagName('head')[0].appendChild(script);
 	} else {
