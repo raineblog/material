@@ -256,7 +256,7 @@
     {% endblock %}
     <script defer>
       document$.subscribe(({ body }) => {
-        m_get_info({{ config.site_author }});
+        m_get_info("{{ config.repo_name }}".split('/')[0]);
         console.log("defer");
       });
     </script>
