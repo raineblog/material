@@ -39,7 +39,7 @@ function foo(response) {
 	} else m_error();
 }
 
-function m_get_info() {
+function m_get_info(site_author) {
 	var cur = document.getElementsByClassName('page-time')[0];
 	if (cur) {
 		var comments = document.getElementById('gitment_container');
@@ -61,7 +61,7 @@ function m_get_info() {
 
 	// var url = document.getElementsByClassName('page_edit_url')[0].href.split('?ref=')[1];
 	var url = document.getElementsByClassName('page_edit_url')[0].href.split('docs')[1];
-	var sub = document.getElementsByClassName('page_edit_url')[0].href.split('{{ config.site_author }}/')[1].split('/edit')[0];
+	var sub = document.getElementsByClassName('page_edit_url')[0].href.split(site_author + '/')[1].split('/edit')[0];
 	// var url = document.URL.replace(/http\S+\.org\//gi, '').replace(/#\S+$/gi, '').slice(0, -1);
 	var script = document.createElement('script');
 
@@ -70,8 +70,8 @@ function m_get_info() {
 
 	if (typeof (url) != 'undefined') {
 		console.log("WOW1");
-		document.getElementsByClassName('edit_history')[0].setAttribute('href', 'https://github.com/{{ config.site_author }}/' + sub + `/commits/main/docs${url}`);
-		script.src = 'https://api.github.com/repos/{{ config.site_author }}/' + sub + `/commits?path=docs${url}&callback=foo`;
+		document.getElementsByClassName('edit_history')[0].setAttribute('href', 'https://github.com/' + site_author + '/' + sub + `/commits/main/docs${url}`);
+		script.src = 'https://api.github.com/repos/' + site_author + '/' + sub + `/commits?path=docs${url}&callback=foo`;
 		console.log(script.src);
 		document.getElementsByTagName('head')[0].appendChild(script);
 	} else {
@@ -100,7 +100,7 @@ document$.subscribe(({ body }) => {
 			$(this).animate({ 'opacity': '0.7' }).css({ 'background': '#AAA', 'color': '#FFF' });;
 		});
 	});
-	m_get_info();
+	// m_get_info({{ config.site_author }});
 	console.log("subscribe");
 });
 
