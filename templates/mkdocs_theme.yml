@@ -33,7 +33,7 @@ features: []
 font:
 
   # Default font for text
-  text: 'Segoe UI'
+  text: 'Noto Sans SC'
 
   # Fixed-width font for code listings
   code: 'Fira Code'

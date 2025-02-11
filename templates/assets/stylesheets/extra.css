@@ -29,3 +29,11 @@ blockquote.page-copyright {
 a:hover {
     filter: invert(0.2); /* 反转颜色 */
 }
+
+:root {
+    --md-code-font: 'Fira Code', 'Source Code Pro', 'Noto Sans SC';
+    --md-text-font: "Noto Sans SC", -apple-system, BlinkMacSystemFont,
+        "San Francisco", "Helvetica Neue", "Noto Sans", "Noto Sans CJK SC",
+        "Noto Sans CJK", "Source Han Sans", "PingFang SC", "Segoe UI",
+        "Microsoft YaHei", sans-serif;
+}
