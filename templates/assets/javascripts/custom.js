@@ -81,14 +81,8 @@ function m_get_info(site_author) {
 }
 
 document$.subscribe(({ body }) => {
-	renderMathInElement(body, {
-		delimiters: [
-			{ left: "$$", right: "$$", display: true },
-			{ left: "$", right: "$", display: false },
-			{ left: "\\(", right: "\\)", display: false },
-			{ left: "\\[", right: "\\]", display: true }
-		],
-	});
+	hljs.highlightAll();
+	console.log("subscribe");
 	$(function () {
 		$(window).scroll(function () {
 			if ($(this).scrollTop() > 200) { $('#scroll-page-top, #scroll-page-top-new').fadeIn(); }
@@ -100,10 +94,12 @@ document$.subscribe(({ body }) => {
 			$(this).animate({ 'opacity': '0.7' }).css({ 'background': '#AAA', 'color': '#FFF' });;
 		});
 	});
-	// m_get_info({{ config.site_author }});
-	console.log("subscribe");
+	renderMathInElement(body, {
+		delimiters: [
+			{ left: "$$", right: "$$", display: true },
+			{ left: "$", right: "$", display: false },
+			{ left: "\\(", right: "\\)", display: false },
+			{ left: "\\[", right: "\\]", display: true }
+		],
+	});
 });
-
-document$.subscribe(() => {
-  hljs.highlightAll()
-})
