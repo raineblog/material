@@ -37,3 +37,13 @@ a:hover {
         "Noto Sans CJK", "Source Han Sans", "PingFang SC", "Segoe UI",
         "Microsoft YaHei", sans-serif;
 }
+
+h2, h3 {
+    text-align: center;
+}
+
+@media print{
+    h1{
+        text-align: center;
+    }
+}

@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+# Copyright (c) 2016-2025 Martin Donath <martin.donath@squidfunk.com>
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -64,8 +64,8 @@ class PrivacyPlugin(BasePlugin[PrivacyConfig]):
         # Initialize collections of external assets
         self.assets = Files([])
         self.assets_expr_map = {
-            ".css": r"url\((\s*http?[^)]+)\)",
-            ".js": r"[\"'](http[^\"']+\.(?:css|js(?:on)?))[\"']",
+            ".css": r"url\(\s*([\"']?)(?P<url>http?[^)'\"]+)\1\s*\)",
+            ".js": r"[\"'](?P<url>http[^\"']+\.(?:css|js(?:on)?))[\"']",
             **self.config.assets_expr_map
         }
 
@@ -96,11 +96,9 @@ class PrivacyPlugin(BasePlugin[PrivacyConfig]):
                     # automatically loads Mermaid.js when a Mermaid diagram is
                     # found in the page - https://bit.ly/36tZXsA.
                     if "mermaid.min.js" in url.path and not config.site_url:
-                        path = url.geturl()
-                        if path not in config.extra_javascript:
-                            config.extra_javascript.append(
-                                ExtraScriptValue(path)
-                            )
+                        script = ExtraScriptValue(url.geturl())
+                        if script not in config.extra_javascript:
+                            config.extra_javascript.append(script)
 
             # The local asset references at least one external asset, which
             # means we must download and replace them later
@@ -148,6 +146,14 @@ class PrivacyPlugin(BasePlugin[PrivacyConfig]):
             url = urlparse(el.get("src"))
             if not self._is_excluded(url, page.file):
                 self._queue(url, config, concurrent = True)
+
+    # Sync all concurrent jobs
+    def on_env(self, env, *, config, files):
+        if not self.config.enabled:
+            return
+
+        # Wait until all jobs until now are finished
+        wait(self.pool_jobs)
 
     # Process external assets in template (run later)
     @event_priority(-50)
@@ -262,10 +268,16 @@ class PrivacyPlugin(BasePlugin[PrivacyConfig]):
         if extension not in self.assets_expr_map:
             return []
 
+        # Skip if source path is not set, which might be true for generated
+        # files or for files that were added programatically in plugins
+        if not initiator.abs_src_path:
+            return []
+
         # Find and extract all external asset URLs
         expr = re.compile(self.assets_expr_map[extension], flags = re.I | re.M)
         with open(initiator.abs_src_path, encoding = "utf-8-sig") as f:
-            return [urlparse(url) for url in re.findall(expr, f.read())]
+            results = re.finditer(expr, f.read())
+            return [urlparse(result.group("url")) for result in results]
 
     # Parse template or page HTML and find all external links that need to be
     # replaced. Many of the assets should already be downloaded earlier, i.e.,
@@ -295,8 +307,8 @@ class PrivacyPlugin(BasePlugin[PrivacyConfig]):
                     if rel == "preconnect":
                         return ""
 
-                    # Replace external style sheet or favicon
-                    if rel == "stylesheet" or rel == "icon":
+                    # Replace external favicon, preload hint or style sheet
+                    if rel in ("icon", "preload", "stylesheet"):
                         file = self._queue(url, config)
                         el.set("href", resolve(file))
 
@@ -307,12 +319,19 @@ class PrivacyPlugin(BasePlugin[PrivacyConfig]):
                     file = self._queue(url, config)
                     el.set("src", resolve(file))
 
+            # Handle external image in SVG
+            if el.tag == "image":
+                url = urlparse(el.get("href"))
+                if not self._is_excluded(url, initiator):
+                    file = self._queue(url, config)
+                    el.set("href", resolve(file))
+
             # Return element as string
             return self._print(el)
 
         # Find and replace all external asset URLs in current page
         return re.sub(
-            r"<(?:(?:a|link)[^>]+href|(?:script|img)[^>]+src)=['\"]?http[^>]+>",
+            r"<(?:(?:a|link|image)[^>]+href|(?:script|img)[^>]+src)=['\"]?http[^>]+>",
             replace, output, flags = re.I | re.M
         )
 
@@ -330,7 +349,7 @@ class PrivacyPlugin(BasePlugin[PrivacyConfig]):
 
         # Return void or opening tag as string, strip closing tag
         data = tostring(el, encoding = "unicode")
-        return data.replace(" />", ">").replace(f"\"{temp}\"", "")
+        return data.replace(" />", ">").replace(f"=\"{temp}\"", "")
 
     # Enqueue external asset for download, if not already done
     def _queue(self, url: URL, config: MkDocsConfig, concurrent = False):
@@ -453,7 +472,7 @@ class PrivacyPlugin(BasePlugin[PrivacyConfig]):
 
             # Replace callback
             def replace(match: Match):
-                value = match.group(1)
+                value = match.group("url")
 
                 # Map URL to canonical path
                 path = self._path_from_url(urlparse(value))

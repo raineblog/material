@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+# Copyright (c) 2016-2025 Martin Donath <martin.donath@squidfunk.com>
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -42,13 +42,13 @@ import sys
 
 from collections import defaultdict
 from hashlib import md5
+from html import unescape
 from io import BytesIO
 from mkdocs.commands.build import DuplicateFilter
 from mkdocs.exceptions import PluginError
 from mkdocs.plugins import BasePlugin
 from mkdocs.utils import write_file
 from shutil import copyfile
-from tempfile import NamedTemporaryFile
 
 from .config import SocialConfig
 
@@ -82,7 +82,8 @@ class SocialPlugin(BasePlugin[SocialConfig]):
     # Retrieve configuration
     def on_config(self, config):
         self.color = colors.get("indigo")
-        self.config.cards = self.config.enabled
+        if not self.config.enabled:
+            self.config.cards = False
         if not self.config.cards:
             return
 
@@ -162,7 +163,7 @@ class SocialPlugin(BasePlugin[SocialConfig]):
         self._image_promises = []
 
     # Create social cards
-    def on_page_markdown(self, markdown, page, config, files):
+    def on_page_content(self, html, page, config, files):
         if not self.config.cards:
             return
 
@@ -298,8 +299,9 @@ class SocialPlugin(BasePlugin[SocialConfig]):
         width = size[0]
         lines, words = [], []
 
-        # Remove remnant HTML tags
+        # Remove remnant HTML tags and convert HTML entities
         text = re.sub(r"(<[^>]+>)", "", text)
+        text = unescape(text)
 
         # Retrieve y-offset of textbox to correct for spacing
         yoffset = 0
@@ -338,9 +340,11 @@ class SocialPlugin(BasePlugin[SocialConfig]):
         file, _ = os.path.splitext(page.file.src_uri)
 
         # Compute page title
-        title = page.meta.get("title", page.title)
-        if not page.is_homepage:
-            title = f"{title} - {config.site_name}"
+        if page.is_homepage:
+            title = config.site_name
+        else:
+            page_title = page.meta.get("title", page.title)
+            title = f"{page_title} - {config.site_name}"
 
         # Compute page description
         description = config.site_description

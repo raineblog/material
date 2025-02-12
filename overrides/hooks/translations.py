@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+# Copyright (c) 2016-2025 Martin Donath <martin.donath@squidfunk.com>
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -175,6 +175,7 @@ countries = {
     "ru": "ru",
     "sa": "in",
     "sh": "rs",
+    "sq": "al",
     "si": "lk",
     "sk": "sk",
     "sl": "si",
