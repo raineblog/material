@@ -10,15 +10,16 @@
     <div id="m_edit_url" style="display: none;">{{ page.edit_url }}</div>
   {% endif %}
   {% if "content.action.view" in features %}
-    {% if "/blob/" in page.edit_url %}
-      {% set part = "blob" %}
+    {% if "/raw/" in page.edit_url %}
+      {% set part = "raw" %}
     {% else %}
       {% set part = "edit" %}
     {% endif %}
-    <a href="{{ page.edit_url | replace(part, 'raw') }}" title="{{ lang.t('action.view') }}" class="md-content__button md-icon">
+    <a href="{{ page.edit_url | replace(part, 'blob') }}" title="{{ lang.t('action.view') }}" class="md-content__button md-icon">
       {% set icon = config.theme.icon.view or "material/file-eye-outline" %}
       {% include ".icons/" ~ icon ~ ".svg" %}
     </a>
-    <<div id="m_edit_url" style="display: none;">{{ page.edit_url | replace(part, 'raw') }}</div>
+    <div id="m_edit_url" style="display: none;">{{ page.edit_url | replace(part, 'blob') }}</div>
   {% endif %}
 {% endif %}
+
