@@ -260,8 +260,10 @@
     {% endblock %}
     <script defer>
       document$.subscribe(({ body }) => {
-        m_get_info("{{ config.repo_name }}".split('/')[0]);
-        console.log("defer");
+        if (($.urlParam('export') || '').toLowerCase() === 'true') {
+          m_get_info("{{ config.repo_name }}".split('/')[0]);
+          console.log("getinfo");
+        }
       });
     </script>
   </body>
