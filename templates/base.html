@@ -258,15 +258,6 @@
         {{ script | script_tag }}
       {% endfor %}
     {% endblock %}
-    <script defer>
-      document$.subscribe(({ body }) => {
-        const params = new URLSearchParams(location.search);
-        const is_export = (params.get('export') || '').toLowerCase()
-        if (is_export !== 'true') {
-          m_get_info("{{ config.repo_name }}".split('/')[0]);
-          console.log("getinfo");
-        }
-      });
-    </script>
+    <script defer> document$.subscribe(({ body }) => { const params = new URLSearchParams(location.search); const is_export = (params.get('export') || '').toLowerCase(); if (is_export !== 'true') { m_get_info("{{ config.repo_name }}".split('/')[0]); console.log("getinfo"); } }); </script>
   </body>
 </html>
